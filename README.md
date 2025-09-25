@@ -80,17 +80,16 @@ combo_summary <- example_results %>%
   mutate(log10_pval = dplyr::coalesce(log10_pval, -log10(pval))) %>%
   summarise(
     synergy_cell = mean(Synergy.score, na.rm = TRUE),
-    log10_cell   = mean(log10_pval,   na.rm = TRUE),
+    log10_cell   = mean(log10_pval, na.rm = TRUE),
     .by = c(Drug.combination, cell)
   ) %>%
   summarise(
-    mean_synergy = mean(synergy_cell, na.rm = TRUE),
-    mean_log10   = mean(log10_cell,   na.rm = TRUE),
-    n_cells      = dplyr::n_distinct(cell),
+    mean_synergy = mean(synergy_cell, na.rm = TRUE), mean_log10 = mean(log10_cell,   na.rm = TRUE),
+    n_cells = dplyr::n_distinct(cell),
     .by = Drug.combination
   )
 
-# 2) Tag exact Top 15 synergists / antagonists; everything else "Other"
+# Color the top synergists and antagonists
 top15 <- combo_summary %>%
   slice_max(mean_synergy, n = 15, with_ties = FALSE) %>%
   transmute(Drug.combination, cat = "Top 15 synergists")
@@ -103,7 +102,7 @@ combo_summary <- combo_summary %>%
   left_join(bind_rows(top15, bot15), by = "Drug.combination") %>%
   mutate(cat = tidyr::replace_na(cat, "Other"))
 
-# Plot (one point per Drug.combination; optional size by n_cells)
+# Volcano synergistic plot
 col_volcano_synergy <- c("Top 15 synergists" = "#B2182B", "Top 15 antagonists" = "#2166AC", "Other" = "#C1C1C1")
 
 volcano_plot <- ggplot(combo_summary, aes(mean_synergy, mean_log10)) +

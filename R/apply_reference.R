@@ -158,7 +158,3 @@ print(volcano_plot_all)
 
 #### Store the results
 write.xlsx(results, "C:/Users/diogo/OneDrive/Ambiente de Trabalho/PhD/Tero Group/DATA/Supplementary_Files/results.xlsx", rowNames = FALSE)
-
-
-
-

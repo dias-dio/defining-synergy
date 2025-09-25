@@ -123,7 +123,7 @@ print(volcano_plot)
 
 ```
 ---
-## Example dataset input
+## Example output 
 ![Volcano plot](Figures/Volcano_plot.png)
 
 ---

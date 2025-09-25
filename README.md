@@ -6,7 +6,7 @@ A statistical framework to detect significant drug combination synergies in canc
 
 ---
 
-## Quick start: direct application of reference null distributions synergy scores stratified by synergy model,and cancer type
+## Quick start: direct application of reference null distributions synergy scores stratified by synergy model and cancer type
 
 ```r
 # Install/load dependencies

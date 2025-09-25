@@ -56,10 +56,15 @@ calculate_pval <- function(refs, method, type, scores) {
 }
 
 # Example of usage
+methods <- c("ZIP", "BLISS", "HSA", "LOEWE")
+type <- c("Breast", "Colon", "Pancreas")
+
+chosen_method <- "ZIP"
+chosen_type <- "Breast"
 # 1) Direct synergy scores in vector format
 
 example_scores <- c(-21.1, -14.9, -9.6, -7, 7, -4.3, -0.6, 0, 0.2, 2.4, 8.9, 10.1, 15.9, 25.3)
-pvals <- calculate_pval(refs, method = "ZIP", type = "Breast", scores = example_scores)
+pvals <- calculate_pval(refs, method = chosen_method, type = chosen_type, scores = example_scores)
 
 results <- data.frame(score = example_scores, pval = pvals, log10_pval = -log10(pvals))
 print(results)

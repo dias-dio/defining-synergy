@@ -132,6 +132,7 @@ print(volcano_plot)
 
 For any questions please contact:  
 - **Diogo Dias** — <diogo.dias@helsinki.fi>  
+- **Tero Aittokallio** — <tero.aittokallio@helsinki.fi>
 
 ---
 
@@ -140,4 +141,5 @@ For any questions please contact:
 This project is licensed under the **MIT License** — see [LICENSE](LICENSE).  
 
 Repository: <https://github.com/dias-dio/defining-synergy/>
+
 

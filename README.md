@@ -131,6 +131,7 @@ print(volcano_plot)
 ## Example output 
 ![Volcano plot](Figures/Volcano_plot.png)
 
+### Please see: https://github.com/dias-dio/defining-synergy/blob/main/R/apply_reference.R for more information
 ---
 
 ## Contact information

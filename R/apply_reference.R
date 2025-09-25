@@ -107,7 +107,7 @@ calculate_pval <- function(refs, method, type, scores) {
 #### User input
 # 1) Choose cancer type  
 types <- c("Breast","Colon","Pancreas")
-chosen_type   <- "Breast"   # <-- changed ##### Change here <-----------------------------------
+chosen_type   <- "Breast" ##### Change here <-----------------------------------
 
 # 2) Choose synergy model
 methods <- c("ZIP","BLISS","HSA","LOEWE")
@@ -158,6 +158,7 @@ print(volcano_plot_all)
 
 #### Store the results
 write.xlsx(results, "C:/Users/diogo/OneDrive/Ambiente de Trabalho/PhD/Tero Group/DATA/Supplementary_Files/results.xlsx", rowNames = FALSE)
+
 
 
 

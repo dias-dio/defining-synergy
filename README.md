@@ -1,6 +1,6 @@
 # A statistical framework for defining synergistic anticancer drug interactions
 
-![Graphical abstract](GA_Synergy_Detection.png)
+![Graphical abstract](Figures/GA_Synergy_Detection.png)
 
 A statistical framework to detect significant drug combination synergies in cancer. Using reference null distributions across various synergy metrics and tissue types, we provide empirical p-values to standardize synergy detection, uncover novel effects, and enable rigorous evaluation of drug combinations.
 
@@ -27,7 +27,7 @@ example_results <- readxl::read_excel("Data/example_results.xlsx")
 
 ---
 ## Example dataset input
-![Example data](Example_data.png)
+![Example data](Figures/Example_data.png)
 
 ```r
 # Reference datasets in list format to use in the main helper function
@@ -124,7 +124,7 @@ print(volcano_plot)
 ```
 ---
 ## Example dataset input
-![Volcano plot](Volcano_plot.png)
+![Volcano plot](Figures/Volcano_plot.png)
 
 ---
 

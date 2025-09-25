@@ -61,6 +61,7 @@ type <- c("Breast", "Colon", "Pancreas")
 
 chosen_method <- "ZIP"
 chosen_type <- "Breast"
+
 # 1) Direct synergy scores in vector format
 
 example_scores <- c(-21.1, -14.9, -9.6, -7, 7, -4.3, -0.6, 0, 0.2, 2.4, 8.9, 10.1, 15.9, 25.3)

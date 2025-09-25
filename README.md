@@ -15,13 +15,13 @@ to_install <- setdiff(pkgs, rownames(installed.packages()))
 if (length(to_install)) install.packages(to_install)
 invisible(lapply(pkgs, library, character.only = TRUE))
 
-# Load reference distributions (example structure: Drug.combination, Synergy.score, cell, tissue)
+# Load reference distributions (example structure: Drug.combination, Synergy.score, cell, type)
 zip_results   <- readxl::read_excel("Data/ZIP_results.xlsx")
 bliss_results <- readxl::read_excel("Data/Bliss_results.xlsx")
 hsa_results   <- readxl::read_excel("Data/HSA_results.xlsx")
 loewe_results <- readxl::read_excel("Data/Loewe_results.xlsx")
 
-# Load example dataset (example structure: Drug.combination, Synergy.score, cell, tissue)
+# Load example dataset (example structure: Drug.combination, Synergy.score, cell, type)
 example_results <- readxl::read_excel("Data/example_results.xlsx")
 ```
 

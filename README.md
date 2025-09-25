@@ -66,16 +66,16 @@ print(results)
 
 # 2) Apply directly with example dataset
 
-example_results$Pval <- calculate_pval(refs, method = "ZIP",type = "Breast",scores = example_results$Synergy.score)
+example_results$pval <- calculate_pval(refs, method = "ZIP",type = "Breast",scores = example_results$Synergy.score)
 
-example_results$Log10_pval <- -log10(example_results$Pval)
+example_results$log10_pval <- -log10(example_results$pval)
 
 # Volcano plotting: Average within each (Drug.combination, cell)
 combo_summary <- example_results %>%
-  mutate(Log10_pval = dplyr::coalesce(Log10_pval, -log10(Pval))) %>%
+  mutate(log10_pval = dplyr::coalesce(log10_pval, -log10(pval))) %>%
   summarise(
     synergy_cell = mean(Synergy.score, na.rm = TRUE),
-    log10_cell   = mean(Log10_pval,   na.rm = TRUE),
+    log10_cell   = mean(log10_pval,   na.rm = TRUE),
     .by = c(Drug.combination, cell)
   ) %>%
   summarise(

@@ -52,15 +52,13 @@ compute_empirical_p <- function(scores, score) {
     p.val
 }
 
-# Reference datasets from the Jaaks et al. for all cancer types
+# Reference datasets 
 references_data <- list(ZIP = zip_results, BLISS = bliss_results, HSA = hsa_results, LOEWE = loewe_results)
 
 # Helper function to calculate empirical p-values based on:
 # i) Synergy model (ZIP, BLISS, HSA, LOEWE)
 # ii) Tissue (Breast, Colon, Pancreas)
 # iii) Synergy scores
-# Reference datasets 
-references_data <- list(ZIP = zip_results, BLISS = bliss_results, HSA = hsa_results, LOEWE = loewe_results)
 
 # Main helper function to derive empirical p-values for any given synergy model, type (i.e., tissue), and synergy scores
 calculate_pval <- function(refs, method, type, scores) {                 
@@ -160,5 +158,6 @@ print(volcano_plot_all)
 
 #### Store the results
 write.xlsx(results, "C:/Users/diogo/OneDrive/Ambiente de Trabalho/PhD/Tero Group/DATA/Supplementary_Files/results.xlsx", rowNames = FALSE)
+
 
 

@@ -2,11 +2,11 @@
 
 ![Graphical abstract](Figures/GA_Synergy_Detection.png)
 
-A statistical framework to detect significant drug combination synergies in cancer. Using reference null distributions across various synergy metrics and tissue types, we provide empirical p-values to standardize synergy detection, uncover novel effects, and enable rigorous evaluation of drug combinations.
+A statistical framework to detect significant drug combination synergies in cancer. Using reference null distributions across various synergy metrics and tissue tissues, we provide empirical p-values to standardize synergy detection, uncover novel effects, and enable rigorous evaluation of drug combinations.
 
 ---
 
-## Quick start: direct application of reference null distributions synergy scores stratified by synergy model and cancer type
+## Quick start: direct application of reference null distributions synergy scores stratified by synergy model and cancer tissue
 
 ```r
 # Install/load dependencies
@@ -15,13 +15,13 @@ to_install <- setdiff(pkgs, rownames(installed.packages()))
 if (length(to_install)) install.packages(to_install)
 invisible(lapply(pkgs, library, character.only = TRUE))
 
-# Load reference distributions (example structure: Drug.combination, Synergy.score, cell, type)
+# Load reference distributions (example structure: Drug.combination, Synergy.score, cell, tissue)
 zip_results   <- readxl::read_excel("Data/ZIP_results.xlsx")
 bliss_results <- readxl::read_excel("Data/Bliss_results.xlsx")
 hsa_results   <- readxl::read_excel("Data/HSA_results.xlsx")
 loewe_results <- readxl::read_excel("Data/Loewe_results.xlsx")
 
-# Load example dataset (example structure: Drug.combination, Synergy.score, cell, type)
+# Load example dataset (example structure: Drug.combination, Synergy.score, cell, tissue)
 example_results <- readxl::read_excel("Data/example_results.xlsx")
 ```
 
@@ -50,7 +50,7 @@ compute_empirical_p <- function(scores, score) {
 # Helper function to directly input synergy model, tissue, and synergy scores
 calculate_pval <- function(refs, method, tissue, scores) {
   ref_df  <- refs[[toupper(method)]]
-  ref_vec <- ref_df$Synergy.score[trimws(ref_df$type) == tissue]
+  ref_vec <- ref_df$Synergy.score[trimws(ref_df$tissue) == tissue]
   ref_vec <- ref_vec[is.finite(ref_vec)]
   vapply(scores, function(x) compute_empirical_p(ref_vec, x), numeric(1))
 }
@@ -103,9 +103,9 @@ col_volcano_synergy <- c("Top 15 synergists" = "#B2182B", "Top 15 antagonists" =
 
 volcano_plot <- ggplot(combo_summary, aes(mean_synergy, mean_log10)) +
   geom_point(aes(colour = cat, size = n_cells), shape = 19, alpha = 0.9) +
-  geom_hline(yintercept = 2,   linetype = "dashed", color = "grey20", linewidth = 1) +
-  geom_vline(xintercept = -10, linetype = "dashed", color = "grey20", linewidth = 1) +
-  geom_vline(xintercept =  10, linetype = "dashed", color = "grey20", linewidth = 1) +
+  geom_hline(yintercept = 2,   linetissue = "dashed", color = "grey20", linewidth = 1) +
+  geom_vline(xintercept = -10, linetissue = "dashed", color = "grey20", linewidth = 1) +
+  geom_vline(xintercept =  10, linetissue = "dashed", color = "grey20", linewidth = 1) +
   scale_colour_manual(values = col_volcano_synergy, guide = "none") +
   scale_size_continuous(range = c(3, 8)) +
   labs(x = "Average synergy",

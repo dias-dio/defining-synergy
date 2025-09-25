@@ -6,7 +6,7 @@ A statistical framework to detect significant drug combination synergies in canc
 
 ---
 
-## Quick start: direct application of reference null distributions (synergy scores stratified by i) synergy model, and ii) cancer type.
+## Quick start: direct application of reference null distributions synergy scores stratified by synergy model,and cancer type
 
 ```r
 # Install/load dependencies
@@ -28,7 +28,6 @@ example_results <- readxl::read_excel("Data/example_results.xlsx")
 ---
 ## Example dataset input
 ![Example data](Example_Excel.png)
-
 
 ```r
 # Reference datasets in list format to use in the main helper function

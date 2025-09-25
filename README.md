@@ -110,7 +110,7 @@ volcano_plot <- ggplot(combo_summary, aes(mean_synergy, mean_log10)) +
   scale_size_continuous(range = c(3, 8)) +
   labs(x = "Average synergy",
        y = "Average -log10 (P-value)",
-       size = "n cells") +
+       size = "cells (n)") +
   theme_classic(base_family = "Arial") +
   theme(
     axis.title = element_text(size = 24, color = "black"),

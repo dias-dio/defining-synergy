@@ -9,7 +9,7 @@ A statistical framework to detect significant drug combination synergies in canc
 ## Quick start: direct application of reference null distributions synergy scores stratified by synergy model and cancer tissue
 
 ```r
-# Install/load dependencies
+# Load all required libraries (PS: Install if any is missing).
 pkgs <- c("dplyr", "readxl", "openxlsx","ggplot2")  
 to_install <- setdiff(pkgs, rownames(installed.packages()))
 if (length(to_install)) install.packages(to_install)

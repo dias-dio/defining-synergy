@@ -47,10 +47,10 @@ compute_empirical_p <- function(scores, score) {
   p.val
 }
 
-# Helper function to directly input synergy model, tissue, and synergy scores
-calculate_pval <- function(refs, method, tissue, scores) {
+# Helper function to directly input synergy model, type, and synergy scores
+calculate_pval <- function(refs, method, type, scores) {
   ref_df  <- refs[[toupper(method)]]
-  ref_vec <- ref_df$Synergy.score[trimws(ref_df$tissue) == tissue]
+  ref_vec <- ref_df$Synergy.score[trimws(ref_df$type) == type]
   ref_vec <- ref_vec[is.finite(ref_vec)]
   vapply(scores, function(x) compute_empirical_p(ref_vec, x), numeric(1))
 }
@@ -59,14 +59,14 @@ calculate_pval <- function(refs, method, tissue, scores) {
 # 1) Direct synergy scores in vector format
 
 example_scores <- c(-21.1, -14.9, -9.6, -7, 7, -4.3, -0.6, 0, 0.2, 2.4, 8.9, 10.1, 15.9, 25.3)
-pvals <- calculate_pval(refs, method = "ZIP", tissue = "Breast", scores = example_scores)
+pvals <- calculate_pval(refs, method = "ZIP", type = "Breast", scores = example_scores)
 
 results <- data.frame(score = example_scores, pval = pvals, log10_pval = -log10(pvals))
 print(results)
 
 # 2) Apply directly with example dataset
 
-example_results$Pval <- calculate_pval(refs, method = "ZIP",tissue = "Breast",scores = example_results$Synergy.score)
+example_results$Pval <- calculate_pval(refs, method = "ZIP",type = "Breast",scores = example_results$Synergy.score)
 
 example_results$Log10_pval <- -log10(example_results$Pval)
 
@@ -103,9 +103,9 @@ col_volcano_synergy <- c("Top 15 synergists" = "#B2182B", "Top 15 antagonists" =
 
 volcano_plot <- ggplot(combo_summary, aes(mean_synergy, mean_log10)) +
   geom_point(aes(colour = cat, size = n_cells), shape = 19, alpha = 0.9) +
-  geom_hline(yintercept = 2,   linetissue = "dashed", color = "grey20", linewidth = 1) +
-  geom_vline(xintercept = -10, linetissue = "dashed", color = "grey20", linewidth = 1) +
-  geom_vline(xintercept =  10, linetissue = "dashed", color = "grey20", linewidth = 1) +
+  geom_hline(yintercept = 2,   linetype = "dashed", color = "grey20", linewidth = 1) +
+  geom_vline(xintercept = -10, linetype = "dashed", color = "grey20", linewidth = 1) +
+  geom_vline(xintercept =  10, linetype = "dashed", color = "grey20", linewidth = 1) +
   scale_colour_manual(values = col_volcano_synergy, guide = "none") +
   scale_size_continuous(range = c(3, 8)) +
   labs(x = "Average synergy",

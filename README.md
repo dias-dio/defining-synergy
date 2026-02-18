@@ -6,7 +6,7 @@ A statistical framework to detect significant drug combination synergies in canc
 
 ---
 
-## Quick start: direct application of reference null distributions synergy scores stratified by synergy model and cancer tissue
+## Quick start: Direct application of tissue-specific reference (null) distributions for synergy scores
 
 ```r
 # Load all required libraries (PS: Install if any is missing).
@@ -131,12 +131,13 @@ print(volcano_plot)
 ## Example output 
 ![Volcano plot](Figures/Volcano_plot.png)
 
-### Please see: https://github.com/dias-dio/defining-synergy/blob/main/R/apply_reference.R for more information
+### For implementation details, see:
+https://github.com/dias-dio/defining-synergy/blob/main/R/apply_reference.R for more information
 ---
 
 ## Contact information
 
-For any questions please contact:  
+For questions or inquiries, please contact: 
 - **Diogo Dias** — <diogo.dias@helsinki.fi>  
 - **Tero Aittokallio** — <tero.aittokallio@helsinki.fi>
 
@@ -144,7 +145,8 @@ For any questions please contact:
 
 ## Copyright and license
 
-This project is licensed under the **MIT License** — see [LICENSE](LICENSE).  
+This project is licensed under the **MIT License**
+See the [LICENSE](LICENSE) for details.  
 
 Repository: <https://github.com/dias-dio/defining-synergy/>
 

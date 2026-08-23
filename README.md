@@ -2,152 +2,93 @@
 
 ![Graphical abstract](Figures/GA_Synergy_Detection.png)
 
-A statistical framework to detect significant drug combination synergies in cancer. Using reference null distributions across various synergy metrics and tissue tissues, we provide empirical p-values to standardize synergy detection, uncover novel effects, and enable rigorous evaluation of drug combinations.
+A statistical framework to detect significant drug combination synergies in cancer. Using tissue-specific reference (null) distributions of synergy scores across multiple synergy metrics, we provide empirical p-values to standardize synergy detection, uncover novel interactions and enable rigorous evaluation of drug combinations in new screens, regardless of scale.
 
 ---
 
-## Quick start: Direct application of tissue-specific reference (null) distributions for synergy scores
+## Repository structure
+
+| Path | Contents |
+| --- | --- |
+| `Data/ZIP_results.xlsx` | Tissue-specific reference distributions of ZIP synergy scores (Jaaks et al., self-combinations excluded) with empirical p-values |
+| `Data/Bliss_results.xlsx` | Reference distributions, Bliss |
+| `Data/HSA_results.xlsx` | Reference distributions, HSA |
+| `Data/Loewe_results.xlsx` | Reference distributions, Loewe |
+| `Data/ZIP_bh_pval_results.xlsx` | ZIP results with Benjamini–Hochberg adjusted p-values per cell line (one sheet per tissue) |
+| `Data/Bashi_results.xlsx` | External validation dataset (Bashi et al., fully measured 7 x 7 matrices), ZIP scores and empirical p-values |
+| `Data/example_results.xlsx` | Example input for the tutorial in `R/apply_reference.R` |
+| `R/apply_reference.R` | Tutorial: compute empirical p-values for your own synergy scores against the reference distributions |
+| `R/figures_main.R` | Code for the main and supplementary figures based on the Jaaks et al. dataset |
+| `R/figures_external.R` | Code for the figures based on the Bashi et al. external dataset |
+
+The reference distributions comprise 61,072 (breast), 26,906 (colorectal) and 18,506 (pancreatic) synergy score observations per metric, derived from 1,975 unique drug combinations across 125 cancer cell lines.
+
+---
+
+## Quick start: apply the tissue-specific reference distributions to your own synergy scores
 
 ```r
-# Load all required libraries (PS: Install if any is missing).
-pkgs <- c("dplyr", "readxl", "openxlsx","ggplot2")  
+# Load required libraries (installed automatically if missing)
+pkgs <- c("dplyr", "readxl", "ggplot2")
 to_install <- setdiff(pkgs, rownames(installed.packages()))
 if (length(to_install)) install.packages(to_install)
 invisible(lapply(pkgs, library, character.only = TRUE))
 
-# Load reference distributions (example structure: Drug.combination, Synergy.score, Method (optional), cell, type)
+# Load the reference distributions
+# (columns: Drug.combination, Synergy.score, cell, type, ...)
 zip_results   <- readxl::read_excel("Data/ZIP_results.xlsx")
 bliss_results <- readxl::read_excel("Data/Bliss_results.xlsx")
 hsa_results   <- readxl::read_excel("Data/HSA_results.xlsx")
 loewe_results <- readxl::read_excel("Data/Loewe_results.xlsx")
 
-# Load example dataset (example structure: Drug.combination, Synergy.score, Method (optional), cell, type)
-example_results <- readxl::read_excel("Data/example_results.xlsx")
+references_data <- list(ZIP = zip_results, BLISS = bliss_results,
+                        HSA = hsa_results, LOEWE = loewe_results)
+
+# Source the p-value functions
+source("R/apply_reference.R")
+
+# Evaluate your synergy scores against a chosen metric and tissue
+my_scores <- c(-21.1, -14.9, -9.6, -4.3, -0.6, 0, 0.2, 2.4, 8.9, 10.1, 15.9, 25.3)
+results <- calculate_pval(references_data, method = "ZIP", type = "Breast",
+                          scores = my_scores)
+print(results)
 ```
 
+For new, independent datasets the empirical p-values use the external formulation p = (b + 1) / (N + 1), where b is the number of reference scores at least as extreme as the observed score and N is the reference size. This guarantees p > 0 and matches the formulation used for external data in the manuscript. A leave-one-out option (`formulation = "loo"`) is available for scores that are themselves part of the reference.
+
+Significant synergistic combinations can then be defined with the dual criterion used throughout the manuscript: synergy score >= 10 and empirical p <= 0.01 (antagonism mirrored at <= -10).
+
 ---
-## Example dataset input
+
+## Example input
+
 ![Example data](Figures/Example_data.png)
 
-```r
-# Reference datasets in list format to use in the main helper function
-refs <- list(ZIP = zip_results, BLISS = bliss_results, HSA = hsa_results, LOEWE = loewe_results)
+`Data/example_results.xlsx` contains ZIP synergy scores from the Bashi et al. breast cancer dataset in the expected input format (`Drug.combination`, `Synergy.score`, `Method`, `cell`, `type`). The full worked example, including the volcano plot below, is in `R/apply_reference.R`.
 
-# Empirical p-value (one-sided)
-compute_empirical_p <- function(scores, score) {
-  s <- scores[is.finite(scores)]
-  N <- length(s)
-  if (!is.finite(score) || N == 0L) return(NA_real_)
-  if (score >= 0) {
-    p.val <- sum(s >= score) / N
-  } else {
-    p.val <- sum(s <= score) / N
-  }
-  if (p.val == 0) p.val <- 1 / N
-  p.val
-}
+## Example output
 
-# Helper function to directly input synergy model, type, and synergy scores
-calculate_pval <- function(refs, method, type, scores) {
-  ref_df  <- refs[[toupper(method)]]
-  ref_vec <- ref_df$Synergy.score[trimws(ref_df$type) == type]
-  ref_vec <- ref_vec[is.finite(ref_vec)]
-  vapply(scores, function(x) compute_empirical_p(ref_vec, x), numeric(1))
-}
-
-# Example of usage
-methods <- c("ZIP", "BLISS", "HSA", "LOEWE")
-type <- c("Breast", "Colon", "Pancreas")
-
-chosen_method <- "ZIP"
-chosen_type <- "Breast"
-
-# 1) Direct synergy scores in vector format
-
-example_scores <- c(-21.1, -14.9, -9.6, -7, 7, -4.3, -0.6, 0, 0.2, 2.4, 8.9, 10.1, 15.9, 25.3)
-pvals <- calculate_pval(refs, method = chosen_method, type = chosen_type, scores = example_scores)
-
-results <- data.frame(score = example_scores, pval = pvals, log10_pval = -log10(pvals))
-print(results)
-
-# 2) Apply directly with example dataset
-
-example_results$pval <- calculate_pval(refs, method = "ZIP",type = "Breast",scores = example_results$Synergy.score)
-
-example_results$log10_pval <- -log10(example_results$pval)
-
-# Volcano plotting: Average within each (Drug.combination, cell)
-combo_summary <- example_results %>%
-  mutate(log10_pval = dplyr::coalesce(log10_pval, -log10(pval))) %>%
-  summarise(
-    synergy_cell = mean(Synergy.score, na.rm = TRUE),
-    log10_cell   = mean(log10_pval, na.rm = TRUE),
-    .by = c(Drug.combination, cell)
-  ) %>%
-  summarise(
-    mean_synergy = mean(synergy_cell, na.rm = TRUE), mean_log10 = mean(log10_cell,   na.rm = TRUE),
-    n_cells = dplyr::n_distinct(cell),
-    .by = Drug.combination
-  )
-
-# Color the top synergists and antagonists
-top15 <- combo_summary %>%
-  slice_max(mean_synergy, n = 15, with_ties = FALSE) %>%
-  transmute(Drug.combination, cat = "Top 15 synergists")
-
-bot15 <- combo_summary %>%
-  slice_min(mean_synergy, n = 15, with_ties = FALSE) %>%
-  transmute(Drug.combination, cat = "Top 15 antagonists")
-
-combo_summary <- combo_summary %>%
-  left_join(bind_rows(top15, bot15), by = "Drug.combination") %>%
-  mutate(cat = tidyr::replace_na(cat, "Other"))
-
-# Volcano synergistic plot
-col_volcano_synergy <- c("Top 15 synergists" = "#B2182B", "Top 15 antagonists" = "#2166AC", "Other" = "#C1C1C1")
-
-volcano_plot <- ggplot(combo_summary, aes(mean_synergy, mean_log10)) +
-  geom_point(aes(colour = cat, size = n_cells), shape = 19, alpha = 0.9) +
-  geom_hline(yintercept = 2,   linetype = "dashed", color = "grey20", linewidth = 1) +
-  geom_vline(xintercept = -10, linetype = "dashed", color = "grey20", linewidth = 1) +
-  geom_vline(xintercept =  10, linetype = "dashed", color = "grey20", linewidth = 1) +
-  scale_colour_manual(values = col_volcano_synergy, guide = "none") +
-  scale_size_continuous(range = c(3, 8)) +
-  labs(x = "Average synergy",
-       y = "Average -log10 (P-value)",
-       size = "cells (n)") +
-  theme_classic(base_family = "Arial") +
-  theme(
-    axis.title = element_text(size = 24, color = "black"),
-    axis.text  = element_text(size = 22, color = "black"),
-    axis.ticks = element_line(size = 1.1),
-    axis.ticks.length = unit(.40, "cm")
-  )
-
-print(volcano_plot)
-
-```
----
-## Example output 
 ![Volcano plot](Figures/Volcano_plot.png)
 
-## For implementation details, see:
-https://github.com/dias-dio/defining-synergy/blob/main/R/apply_reference.R 
 ---
+
+## Citation
+
+If you use the reference distributions or code, please cite:
+
+Dias D. et al. A statistical framework for defining synergistic anticancer drug interactions (manuscript under review). Details will be updated upon publication.
+
+Underlying screening data: Jaaks et al. Nature 603, 166-173 (2022); Bashi et al. Cancer Discov. 14, 846-865 (2024).
 
 ## Contact information
 
-For questions or inquiries, please contact: 
-- **Diogo Dias** — <diogo.dias@helsinki.fi>  
-- **Tero Aittokallio** — <tero.aittokallio@helsinki.fi>
+For questions or inquiries, please contact:
+
+- **Diogo Dias** - diogo.dias@helsinki.fi
+- **Tero Aittokallio** - tero.aittokallio@helsinki.fi
 
 ---
 
 ## Copyright and license
 
-This project is licensed under the **MIT License**
-See the [LICENSE](LICENSE) for details.  
-
-Repository: <https://github.com/dias-dio/defining-synergy/>
-
-
+This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for details.
